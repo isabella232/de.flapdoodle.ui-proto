@@ -16,11 +16,14 @@
  */
 package de.flapdoodle.ui;
 
+import de.flapdoodle.ui.sample.MyControl;
+import de.flapdoodle.ui.tab.Overview;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -42,8 +45,15 @@ public class Launcher extends Application {
             }
         });
         
-        StackPane root = new StackPane();
-        root.getChildren().add(btn);
+        MyControl myControl = new MyControl();
+        Overview overview = new Overview();
+        
+        //StackPane root = new StackPane();
+        GridPane root = new GridPane();
+        GridPane.setConstraints(btn, 0,0);
+        GridPane.setConstraints(myControl, 1,0);
+        GridPane.setConstraints(overview, 0,1,3,3);
+		root.getChildren().addAll(btn, myControl, overview);
         primaryStage.setScene(new Scene(root, 300, 250));
         primaryStage.show();
     }

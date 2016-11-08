@@ -1,0 +1,9 @@
+package de.flapdoodle.ui.sample
+
+import javafx.scene.layout.AnchorPane
+
+component SampleGraph {
+	AnchorPane {
+		//TODO Add Nodes
+	}
+}
