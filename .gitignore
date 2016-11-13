@@ -22,6 +22,9 @@ velocity.log
 .project
 .settings
 .externalToolBuilders
+.factorypath
 
 # idea settings #
 .idea
+
+
