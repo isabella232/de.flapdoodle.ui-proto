@@ -1,4 +1,4 @@
-package de.flapdoodle.ui.tab.data.playground;
+package de.flapdoodle.ui.tab.data;
 
 import java.util.UUID;
 

@@ -6,6 +6,8 @@ import org.immutables.value.Value;
 import org.immutables.value.Value.Parameter;
 import org.immutables.value.Value.Style.BuilderVisibility;
 
+import com.google.common.collect.ImmutableSet;
+
 @Value.Immutable
 @Value.Style(builderVisibility=BuilderVisibility.PACKAGE)
 public abstract class ColumnType<T> {
@@ -24,5 +26,4 @@ public abstract class ColumnType<T> {
 	public <T> boolean isValidValue(T v) {
 		return (v==null || type().isInstance(v));
 	}
-	
 }

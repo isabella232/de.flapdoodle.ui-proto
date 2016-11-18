@@ -1,5 +1,7 @@
 package de.flapdoodle.ui.tab.data;
 
+import java.util.List;
+
 import org.immutables.value.Value;
 import org.immutables.value.Value.Check;
 
@@ -9,11 +11,13 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
+import de.flapdoodle.ui.types.NullawareImmutableList;
+
 @Value.Immutable
 public abstract class Column<T> {
 	public abstract ColumnType<T> columnType();
 
-	public abstract ImmutableList<T> values();
+	public abstract NullawareImmutableList<T> values();
 	
 	protected boolean isEmpty() {
 		return values().isEmpty();
@@ -41,8 +45,10 @@ public abstract class Column<T> {
 		
 		return ImmutableColumn.<T>builder()
 				.columnType(a.columnType())
-				.addAllValues(a.values())
-				.addAllValues(b.values())
+				.values(NullawareImmutableList.<T>builder()
+					.addAll(a.values())
+					.addAll(b.values())
+					.build())
 				.build();
 	}
 	
@@ -53,9 +59,11 @@ public abstract class Column<T> {
 			
 			return ImmutableColumn.<T>builder()
 					.columnType(columnType())
-					.addAllValues(prepend.values())
-					.addAllValues(values())
-					.addAllValues(append.values())
+					.values(NullawareImmutableList.<T>builder()
+						.addAll(prepend.values())
+						.addAll(values())
+						.addAll(append.values())
+						.build())
 					.build();
 		}
 		
@@ -79,14 +87,14 @@ public abstract class Column<T> {
 	public static <T> Column<T> of(ColumnType<T> columnType, T...values) {
 		return ImmutableColumn.<T>builder()
 				.columnType(columnType)
-				.addValues(values)
+				.values(NullawareImmutableList.copyOf(values))
 				.build();
 	}
 	
 	public static <T> Column<T> of(ColumnType<T> columnType, Iterable<T> values) {
 		return ImmutableColumn.<T>builder()
 				.columnType(columnType)
-				.addAllValues(values)
+				.values(NullawareImmutableList.of(values))
 				.build();
 	}
 }

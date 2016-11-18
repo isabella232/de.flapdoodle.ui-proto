@@ -15,6 +15,13 @@ public class ColumnTest {
 	}
 	
 	@Test
+	public void nullIsAllowed() {
+		Column<String> emptyString = Column.of(ColumnType.String,"A",null,"B");
+		assertEquals(3,emptyString.values().size());
+		assertNull(emptyString.values().get(1));
+	}
+	
+	@Test
 	public void joinEmptyGivesSecond() {
 		Column<String> a = Column.of(ColumnType.String);
 		Column<String> b = Column.of(ColumnType.String,"Second");
