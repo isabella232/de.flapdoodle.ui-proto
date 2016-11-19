@@ -16,7 +16,7 @@ public abstract class SynchronizedDelegate<T> {
 		consumer.accept(delegate());
 	}
 	
-	public synchronized <R> R call(Function<T,R> call) {
+	public synchronized <R> R get(Function<? super T,? extends R> call) {
 		return call.apply(delegate());
 	}
 	

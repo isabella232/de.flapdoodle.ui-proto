@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 
 import javaslang.collection.LinkedHashMap;
 import javaslang.collection.Map;
+import javaslang.collection.Set;
 import javaslang.control.Option;
 
 public class Document {
@@ -18,5 +19,9 @@ public class Document {
 
 	public Option<Columns> columns(EntityId<Columns> id) {
 		return columnsMap.get(id);
+	}
+
+	public Set<EntityId<Columns>> allColumns() {
+		return columnsMap.keySet();
 	}
 }

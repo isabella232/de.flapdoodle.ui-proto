@@ -19,6 +19,7 @@ package de.flapdoodle.ui;
 import de.flapdoodle.ui.sample.MyControl;
 import de.flapdoodle.ui.tab.DocumentUI;
 import de.flapdoodle.ui.tab.Overview;
+import de.flapdoodle.ui.tab.data.Columns;
 import de.flapdoodle.ui.tab.data.Document;
 import de.flapdoodle.ui.tab.threading.SynchronizedDelegate;
 import javafx.application.Application;
@@ -50,6 +51,12 @@ public class Launcher extends Application {
         });
         
         SynchronizedDelegate<Document> doc = SynchronizedDelegate.of(new Document());
+        
+        doc.call(d -> {
+        	d.add(new Columns());
+        	d.add(new Columns());
+        	d.add(new Columns());
+        });
         
         MyControl myControl = new MyControl();
         Overview overview = new Overview();
