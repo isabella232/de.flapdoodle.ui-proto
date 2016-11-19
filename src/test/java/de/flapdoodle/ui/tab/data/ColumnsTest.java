@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import javaslang.collection.HashSet;
+import javaslang.collection.List;
 
 public class ColumnsTest {
 
@@ -20,5 +21,11 @@ public class ColumnsTest {
 		
 		assertEquals(HashSet.of(stringColumnId, intColumnId), columns.columns());
 		assertEquals(3,columns.column(intColumnId).get().values().size());
+		
+		columns.insert(intColumnId, 3, Column.of(ColumnType.Integer, 10,11));
+		
+		assertEquals(5,columns.column(stringColumnId).get().values().size());
+		assertEquals(5,columns.column(intColumnId).get().values().size());
+		assertEquals(List.of(1,2,null,10,11),columns.column(intColumnId).get().values());
 	}
 }
