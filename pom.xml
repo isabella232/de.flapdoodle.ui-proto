@@ -360,5 +360,10 @@
             <artifactId>serial</artifactId>
             <version>2.2.10</version>
         </dependency>
+	    <dependency>
+	        <groupId>io.javaslang</groupId>
+	        <artifactId>javaslang</artifactId>
+	        <version>2.0.4</version>
+	    </dependency>
     </dependencies>
 </project>

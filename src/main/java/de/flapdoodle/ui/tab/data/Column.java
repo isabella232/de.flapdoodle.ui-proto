@@ -1,23 +1,19 @@
 package de.flapdoodle.ui.tab.data;
 
-import java.util.List;
-
 import org.immutables.value.Value;
 import org.immutables.value.Value.Check;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
 
-import de.flapdoodle.ui.types.NullawareImmutableList;
+import de.flapdoodle.javaslang.Lists;
+import javaslang.collection.List;
 
 @Value.Immutable
 public abstract class Column<T> {
 	public abstract ColumnType<T> columnType();
 
-	public abstract NullawareImmutableList<T> values();
+	public abstract List<T> values();
 	
 	protected boolean isEmpty() {
 		return values().isEmpty();
@@ -25,11 +21,11 @@ public abstract class Column<T> {
 	
 	@Check
 	protected void check() {
-		Preconditions.checkArgument(Iterables.all(values(), v -> v==null || columnType().isValidValue(v)),"invalid values: %s -> %s",columnType(),values());
+		Preconditions.checkArgument(values().forAll(v -> v==null || columnType().isValidValue(v)),"invalid values: %s -> %s",columnType(),values());
 	}
 	
 	public Column<T> part(int offset, int length) {
-		return of(columnType(),values().subList(offset, offset+length)); 
+		return of(columnType(),values().subSequence(offset, offset+length)); 
 	}
 	
 	public Column<T> part(int offset) {
@@ -45,10 +41,7 @@ public abstract class Column<T> {
 		
 		return ImmutableColumn.<T>builder()
 				.columnType(a.columnType())
-				.values(NullawareImmutableList.<T>builder()
-					.addAll(a.values())
-					.addAll(b.values())
-					.build())
+				.values(a.values().appendAll(b.values()))
 				.build();
 	}
 	
@@ -59,11 +52,7 @@ public abstract class Column<T> {
 			
 			return ImmutableColumn.<T>builder()
 					.columnType(columnType())
-					.values(NullawareImmutableList.<T>builder()
-						.addAll(prepend.values())
-						.addAll(values())
-						.addAll(append.values())
-						.build())
+					.values(prepend.values().appendAll(values()).appendAll(append.values()))
 					.build();
 		}
 		
@@ -84,17 +73,21 @@ public abstract class Column<T> {
 		return other.join(part(0,index),part(index));
 	}
 	
+	public Column<T> append(int size, T value) {
+		return append(of(columnType(),List.fill(size, () -> value)));
+	}
+	
 	public static <T> Column<T> of(ColumnType<T> columnType, T...values) {
 		return ImmutableColumn.<T>builder()
 				.columnType(columnType)
-				.values(NullawareImmutableList.copyOf(values))
+				.values(List.of(values))
 				.build();
 	}
 	
 	public static <T> Column<T> of(ColumnType<T> columnType, Iterable<T> values) {
 		return ImmutableColumn.<T>builder()
 				.columnType(columnType)
-				.values(NullawareImmutableList.of(values))
+				.values(Lists.of(values))
 				.build();
 	}
 }

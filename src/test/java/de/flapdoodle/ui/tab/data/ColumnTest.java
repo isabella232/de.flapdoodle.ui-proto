@@ -6,6 +6,8 @@ import org.junit.Test;
 
 import com.google.common.collect.ImmutableList;
 
+import javaslang.collection.List;
+
 public class ColumnTest {
 
 	@Test
@@ -16,9 +18,19 @@ public class ColumnTest {
 	
 	@Test
 	public void nullIsAllowed() {
-		Column<String> emptyString = Column.of(ColumnType.String,"A",null,"B");
-		assertEquals(3,emptyString.values().size());
-		assertNull(emptyString.values().get(1));
+		Column<String> stringColumn = Column.of(ColumnType.String,"A",null,"B");
+		assertEquals(3,stringColumn.values().size());
+		assertNull(stringColumn.values().get(1));
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void putBadAppleIntoColumn() {
+		Column<String> stringColumn = Column.of(ColumnType.String,"A",null,"B");
+		assertEquals(3,stringColumn.values().size());
+		assertNull(stringColumn.values().get(1));
+		
+		Column stringColumnAsRaw=stringColumn;
+		stringColumnAsRaw.append(Column.of(ColumnType.Integer, 2));
 	}
 	
 	@Test
@@ -33,7 +45,7 @@ public class ColumnTest {
 	public void joinNonEmptyGivesJoinedResults() {
 		Column<String> a = Column.of(ColumnType.String,"First");
 		Column<String> b = Column.of(ColumnType.String,"Second");
-		assertEquals(ImmutableList.of("First","Second"), Column.joinTwo(a,b).values());
+		assertEquals(List.of("First","Second"), Column.joinTwo(a,b).values());
 	}
 	
 	@Test
@@ -41,7 +53,7 @@ public class ColumnTest {
 		Column<String> a = Column.of(ColumnType.String,"First");
 		Column<String> b = Column.of(ColumnType.String,"Second");
 		Column<String> c = Column.of(ColumnType.String,"Third");
-		assertEquals(ImmutableList.of("First","Second","Third"), b.join(a,c).values());
+		assertEquals(List.of("First","Second","Third"), b.join(a,c).values());
 	}
 	
 	@Test
@@ -49,25 +61,25 @@ public class ColumnTest {
 		Column<String> a = Column.of(ColumnType.String,"First");
 		Column<String> b = Column.of(ColumnType.String,"Second");
 		Column<String> c = Column.of(ColumnType.String);
-		assertEquals(ImmutableList.of("First","Second"), b.join(a,c).values());
+		assertEquals(List.of("First","Second"), b.join(a,c).values());
 		
 		a = Column.of(ColumnType.String);
 		b = Column.of(ColumnType.String,"First");
 		c = Column.of(ColumnType.String,"Second");
-		assertEquals(ImmutableList.of("First","Second"), b.join(a,c).values());
+		assertEquals(List.of("First","Second"), b.join(a,c).values());
 		
 		a = Column.of(ColumnType.String,"First");
 		b = Column.of(ColumnType.String);
 		c = Column.of(ColumnType.String,"Second");
-		assertEquals(ImmutableList.of("First","Second"), b.join(a,c).values());
+		assertEquals(List.of("First","Second"), b.join(a,c).values());
 	}
 	
 	@Test
 	public void joinTwoGivesJoinedResults() {
 		Column<String> a = Column.of(ColumnType.String,"First");
 		Column<String> b = Column.of(ColumnType.String,"Second");
-		assertEquals(ImmutableList.of("First","Second"), a.join(null,b).values());
-		assertEquals(ImmutableList.of("First","Second"), b.join(a,null).values());
+		assertEquals(List.of("First","Second"), a.join(null,b).values());
+		assertEquals(List.of("First","Second"), b.join(a,null).values());
 	}
 	
 	@Test
@@ -80,20 +92,20 @@ public class ColumnTest {
 	public void appendGivesJoinedResults() {
 		Column<String> a = Column.of(ColumnType.String,"First");
 		Column<String> b = Column.of(ColumnType.String,"Second");
-		assertEquals(ImmutableList.of("First","Second"), a.append(b).values());
+		assertEquals(List.of("First","Second"), a.append(b).values());
 	}
 	
 	@Test
 	public void prependGivesJoinedResults() {
 		Column<String> a = Column.of(ColumnType.String,"First");
 		Column<String> b = Column.of(ColumnType.String,"Second");
-		assertEquals(ImmutableList.of("First","Second"), b.prepend(a).values());
+		assertEquals(List.of("First","Second"), b.prepend(a).values());
 	}
 	
 	@Test
 	public void insertIntoSplitFirst() {
 		Column<String> a = Column.of(ColumnType.String,"One","Two","Three");
 		Column<String> b = Column.of(ColumnType.String,"A","B","C");
-		assertEquals(ImmutableList.of("One","Two","A","B","C","Three"), a.insert(b, 2).values());
+		assertEquals(List.of("One","Two","A","B","C","Three"), a.insert(b, 2).values());
 	}
 }
