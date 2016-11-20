@@ -2,12 +2,14 @@ package de.flapdoodle.ui.tab;
 
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 
 import de.flapdoodle.ui.tab.data.Columns;
 import de.flapdoodle.ui.tab.data.Document;
 import de.flapdoodle.ui.tab.data.EntityId;
 import de.flapdoodle.ui.tab.threading.SynchronizedDelegate;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -15,6 +17,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Control;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SkinBase;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
@@ -89,9 +92,80 @@ public class DocumentUI extends Control {
 		ret.setText("id:"+id.uuid().toString());
 		ret.setTranslateX(ThreadLocalRandom.current().nextInt(300));
 		ret.setTranslateY(ThreadLocalRandom.current().nextInt(300));
-		return ret;
+		ret.setOnAction(action -> {
+			System.out.println("-> "+id);
+		});
+//		ret.setOnMouseDragReleased(event -> {
+//			System.out.println("dragged -> "+id);
+//		});
+		return makeDraggable(ret);
+		//return ret;
 	}
 
+	private static final class DragContext {
+
+		protected double mouseAnchorX;
+		protected double mouseAnchorY;
+		protected double initialTranslateX;
+		protected double initialTranslateY;
+		
+	}
+	
+	private Node makeDraggable(final Node node) {
+	    final DragContext dragContext = new DragContext();
+	    final Group wrapGroup = new Group(node);
+	    AtomicBoolean dragModeActiveProperty=new AtomicBoolean(true);
+	 
+	    wrapGroup.addEventFilter(
+	        MouseEvent.ANY,
+	        new EventHandler<MouseEvent>() {
+	            public void handle(final MouseEvent mouseEvent) {
+	                if (dragModeActiveProperty.get()) {
+	                    // disable mouse events for all children
+	                    mouseEvent.consume();
+	                }
+	             }
+	        });
+	 
+	    wrapGroup.addEventFilter(
+	        MouseEvent.MOUSE_PRESSED,
+	        new EventHandler<MouseEvent>() {
+	            public void handle(final MouseEvent mouseEvent) {
+	                if (dragModeActiveProperty.get()) {
+	                    // remember initial mouse cursor coordinates
+	                    // and node position
+	                    dragContext.mouseAnchorX = mouseEvent.getX();
+	                    dragContext.mouseAnchorY = mouseEvent.getY();
+	                    dragContext.initialTranslateX =
+	                        node.getTranslateX();
+	                    dragContext.initialTranslateY =
+	                        node.getTranslateY();
+	                }
+	            }
+	        });
+	 
+	    wrapGroup.addEventFilter(
+	        MouseEvent.MOUSE_DRAGGED,
+	        new EventHandler<MouseEvent>() {
+	            public void handle(final MouseEvent mouseEvent) {
+	                if (dragModeActiveProperty.get()) {
+	                    // shift node from its initial position by delta
+	                    // calculated from mouse cursor movement
+	                    node.setTranslateX(
+	                        dragContext.initialTranslateX
+	                            + mouseEvent.getX()
+	                            - dragContext.mouseAnchorX);
+	                    node.setTranslateY(
+	                        dragContext.initialTranslateY
+	                            + mouseEvent.getY()
+	                            - dragContext.mouseAnchorY);
+	                }
+	            }
+	        });
+	 
+	    return wrapGroup;
+
+	}
 	private static class DocumentUISkin extends SkinBase<DocumentUI> {
 
 		protected DocumentUISkin(DocumentUI control) {
