@@ -3,6 +3,7 @@ package de.flapdoodle.ui.tab.block;
 import javafx.scene.control.Button;
 import javafx.scene.control.Control;
 
+@Deprecated
 public class Block extends Control {
 
 	public Block() {

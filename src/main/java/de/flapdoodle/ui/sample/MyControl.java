@@ -3,6 +3,7 @@ package de.flapdoodle.ui.sample;
 import javafx.scene.control.Button;
 import javafx.scene.control.Control;
 
+@Deprecated
 public class MyControl extends Control {
 	public MyControl() {
 		getStyleClass().add("custom-control");

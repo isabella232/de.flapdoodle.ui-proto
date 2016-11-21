@@ -10,6 +10,7 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
+@Deprecated
 public class Overview extends Control {
 
 	public Overview() {

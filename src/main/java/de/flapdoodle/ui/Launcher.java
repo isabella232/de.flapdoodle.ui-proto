@@ -17,8 +17,8 @@
 package de.flapdoodle.ui;
 
 import de.flapdoodle.ui.sample.MyControl;
-import de.flapdoodle.ui.tab.DocumentUI;
 import de.flapdoodle.ui.tab.Overview;
+import de.flapdoodle.ui.tab.components.DocumentUI;
 import de.flapdoodle.ui.tab.data.Columns;
 import de.flapdoodle.ui.tab.data.Document;
 import de.flapdoodle.ui.tab.threading.SynchronizedDelegate;

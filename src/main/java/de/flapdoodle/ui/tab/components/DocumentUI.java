@@ -1,4 +1,4 @@
-package de.flapdoodle.ui.tab;
+package de.flapdoodle.ui.tab.components;
 
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -88,18 +88,18 @@ public class DocumentUI extends Control {
 	}
 
 	private Node columnUiOf(EntityId<Columns> id) {
-		Button ret = new Button();
-		ret.setText("id:"+id.uuid().toString());
+		Node ret = ColumnsUI.of(id);
+		//ret.setText("id:"+id.uuid().toString());
 		ret.setTranslateX(ThreadLocalRandom.current().nextInt(300));
 		ret.setTranslateY(ThreadLocalRandom.current().nextInt(300));
-		ret.setOnAction(action -> {
-			System.out.println("-> "+id);
-		});
+//		ret.setOnAction(action -> {
+//			System.out.println("-> "+id);
+//		});
 //		ret.setOnMouseDragReleased(event -> {
 //			System.out.println("dragged -> "+id);
 //		});
-		return makeDraggable(ret);
-		//return ret;
+		//return makeDraggable(ret);
+		return Dragging.makeDraggable(ret);
 	}
 
 	private static final class DragContext {
