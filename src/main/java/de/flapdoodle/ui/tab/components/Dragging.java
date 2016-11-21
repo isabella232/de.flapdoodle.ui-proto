@@ -94,7 +94,7 @@ public abstract class Dragging {
 	        MouseEvent.ANY,
 	        mouseEvent -> {
 		    	EventType<? extends MouseEvent> eventType = mouseEvent.getEventType();
-				System.out.println(eventType+" "+dragModeActiveProperty+":"+mouseEvent.getPickResult().getIntersectedNode()); 
+				//System.out.println(eventType+" "+dragModeActiveProperty+":"+mouseEvent.getPickResult().getIntersectedNode()); 
 		    	
 	        	if (dragModeActiveProperty.get()) {
 	        		if (eventType==MouseEvent.MOUSE_PRESSED) {
@@ -130,7 +130,7 @@ public abstract class Dragging {
 	        MouseEvent.MOUSE_PRESSED,
 	        mouseEvent -> {
 				if (dragModeActiveProperty.get()) {
-			    	System.out.println("pressed"); 
+			    	//System.out.println("pressed"); 
 //					dragModeActiveProperty.set(true);
 //					mouseEvent.consume();
 					
@@ -149,7 +149,7 @@ public abstract class Dragging {
 	        MouseEvent.MOUSE_DRAGGED,
 	        mouseEvent -> {
 			    if (dragModeActiveProperty.get()) {
-			    	System.out.println("dragged"); 
+			    	//System.out.println("dragged"); 
 			        // shift node from its initial position by delta
 			        // calculated from mouse cursor movement
 			        node.setTranslateX(

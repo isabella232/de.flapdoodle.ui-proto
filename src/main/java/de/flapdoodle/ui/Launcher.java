@@ -30,7 +30,9 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 public class Launcher extends Application {
     public static void main(String[] args) {
@@ -77,5 +79,14 @@ public class Launcher extends Application {
 		
         primaryStage.setScene(new Scene(root, 300, 250));
         primaryStage.show();
+        
+//        Stage secondStage = new Stage();
+//        secondStage.setTitle("Your to-do.....");
+//        secondStage.setScene(new Scene(root, 300, 250));
+//        secondStage.initStyle(StageStyle.DECORATED);
+//        secondStage.initModality(Modality.NONE);
+//        secondStage.initOwner(primaryStage);
+//        primaryStage.toFront();
+//        secondStage.show();
     }
 }
