@@ -4,6 +4,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
@@ -92,14 +93,32 @@ public abstract class Dragging {
 	    wrapGroup.addEventFilter(
 	        MouseEvent.ANY,
 	        mouseEvent -> {
-	        	if (mouseEvent.getEventType()!=MouseEvent.MOUSE_CLICKED && mouseEvent.getEventType()!=MouseEvent.MOUSE_DRAGGED) {
-			    	System.out.println(mouseEvent.getEventType()+" "+dragModeActiveProperty+":"+mouseEvent.getPickResult().getIntersectedNode()); 
-					if (shouldDrag(mouseEvent.getPickResult().getIntersectedNode())) {
-						dragModeActiveProperty.set(true);
-				    } else {
-				    	dragModeActiveProperty.set(false);
-				    }
+		    	EventType<? extends MouseEvent> eventType = mouseEvent.getEventType();
+				System.out.println(eventType+" "+dragModeActiveProperty+":"+mouseEvent.getPickResult().getIntersectedNode()); 
+		    	
+	        	if (dragModeActiveProperty.get()) {
+	        		if (eventType==MouseEvent.MOUSE_PRESSED) {
+	        			dragModeActiveProperty.set(false);
+	        		}
+	        		if (eventType==MouseEvent.MOUSE_MOVED || eventType==MouseEvent.MOUSE_ENTERED) {
+	        			if (!shouldDrag(mouseEvent.getPickResult().getIntersectedNode())) {
+	        				dragModeActiveProperty.set(false);
+	        			}
+	        		}
+	        	} else {
+	        		if (eventType!=MouseEvent.MOUSE_CLICKED) {
+	        			if (shouldDrag(mouseEvent.getPickResult().getIntersectedNode())) {
+	        				dragModeActiveProperty.set(true);
+	        			}
+	        		}
 	        	}
+//	        	if (mouseEvent.getEventType()!=MouseEvent.MOUSE_CLICKED && mouseEvent.getEventType()!=MouseEvent.MOUSE_DRAGGED) {
+//					if (shouldDrag(mouseEvent.getPickResult().getIntersectedNode())) {
+//						dragModeActiveProperty.set(true);
+//				    } else {
+//				    	dragModeActiveProperty.set(false);
+//				    }
+//	        	}
 	        	
 	        	if (dragModeActiveProperty.get()) {
 			        // disable mouse events for all children
@@ -143,10 +162,10 @@ public abstract class Dragging {
 			                - dragContext.mouseAnchorY);
 			    }
 			});
-	    wrapGroup.addEventFilter(MouseEvent.MOUSE_RELEASED, event -> { 
-	    	System.out.println("released"); 
-	    	dragModeActiveProperty.set(false);
-	    });
+//	    wrapGroup.addEventFilter(MouseEvent.MOUSE_RELEASED, event -> { 
+//	    	System.out.println("released"); 
+//	    	dragModeActiveProperty.set(false);
+//	    });
 	 
 	    return wrapGroup;
 
