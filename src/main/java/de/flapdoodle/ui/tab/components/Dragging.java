@@ -91,58 +91,62 @@ public abstract class Dragging {
 	 
 	    wrapGroup.addEventFilter(
 	        MouseEvent.ANY,
-	        new EventHandler<MouseEvent>() {
-	            public void handle(final MouseEvent mouseEvent) {
-	            	if (shouldDrag(mouseEvent.getPickResult().getIntersectedNode())) {
-	            		dragModeActiveProperty.set(true);
-	                    // disable mouse events for all children
-	                    mouseEvent.consume();
-	                }
-	             }
-	        });
+	        mouseEvent -> {
+	        	if (mouseEvent.getEventType()!=MouseEvent.MOUSE_CLICKED && mouseEvent.getEventType()!=MouseEvent.MOUSE_DRAGGED) {
+			    	System.out.println(mouseEvent.getEventType()+" "+dragModeActiveProperty+":"+mouseEvent.getPickResult().getIntersectedNode()); 
+					if (shouldDrag(mouseEvent.getPickResult().getIntersectedNode())) {
+						dragModeActiveProperty.set(true);
+				    } else {
+				    	dragModeActiveProperty.set(false);
+				    }
+	        	}
+	        	
+	        	if (dragModeActiveProperty.get()) {
+			        // disable mouse events for all children
+					mouseEvent.consume();
+	        	}
+			 });
 	 
 	    wrapGroup.addEventFilter(
 	        MouseEvent.MOUSE_PRESSED,
-	        new EventHandler<MouseEvent>() {
-	            public void handle(final MouseEvent mouseEvent) {
-	            	if (dragModeActiveProperty.get()) {
-	                    // remember initial mouse cursor coordinates
-	                    // and node position
-	                    dragContext.mouseAnchorX = mouseEvent.getX();
-	                    dragContext.mouseAnchorY = mouseEvent.getY();
-	                    dragContext.initialTranslateX =
-	                        node.getTranslateX();
-	                    dragContext.initialTranslateY =
-	                        node.getTranslateY();
-	                }
-	            }
-	        });
+	        mouseEvent -> {
+				if (dragModeActiveProperty.get()) {
+			    	System.out.println("pressed"); 
+//					dragModeActiveProperty.set(true);
+//					mouseEvent.consume();
+					
+			        // remember initial mouse cursor coordinates
+			        // and node position
+			        dragContext.mouseAnchorX = mouseEvent.getX();
+			        dragContext.mouseAnchorY = mouseEvent.getY();
+			        dragContext.initialTranslateX =
+			            node.getTranslateX();
+			        dragContext.initialTranslateY =
+			            node.getTranslateY();
+			    }
+			});
 	 
 	    wrapGroup.addEventFilter(
 	        MouseEvent.MOUSE_DRAGGED,
-	        new EventHandler<MouseEvent>() {
-	            public void handle(final MouseEvent mouseEvent) {
-	                if (dragModeActiveProperty.get()) {
-	                    // shift node from its initial position by delta
-	                    // calculated from mouse cursor movement
-	                    node.setTranslateX(
-	                        dragContext.initialTranslateX
-	                            + mouseEvent.getX()
-	                            - dragContext.mouseAnchorX);
-	                    node.setTranslateY(
-	                        dragContext.initialTranslateY
-	                            + mouseEvent.getY()
-	                            - dragContext.mouseAnchorY);
-	                }
-	            }
-	        });
-	    wrapGroup.addEventFilter(MouseEvent.MOUSE_RELEASED, new EventHandler<MouseEvent>() {
-
-			@Override
-			public void handle(MouseEvent event) {
-				dragModeActiveProperty.set(false);
-				
-			}});
+	        mouseEvent -> {
+			    if (dragModeActiveProperty.get()) {
+			    	System.out.println("dragged"); 
+			        // shift node from its initial position by delta
+			        // calculated from mouse cursor movement
+			        node.setTranslateX(
+			            dragContext.initialTranslateX
+			                + mouseEvent.getX()
+			                - dragContext.mouseAnchorX);
+			        node.setTranslateY(
+			            dragContext.initialTranslateY
+			                + mouseEvent.getY()
+			                - dragContext.mouseAnchorY);
+			    }
+			});
+	    wrapGroup.addEventFilter(MouseEvent.MOUSE_RELEASED, event -> { 
+	    	System.out.println("released"); 
+	    	dragModeActiveProperty.set(false);
+	    });
 	 
 	    return wrapGroup;
 
@@ -150,7 +154,9 @@ public abstract class Dragging {
 
 
 	protected static boolean shouldDrag(Node node) {
-		return node.getProperties().get(DRAG_ME) != null;
+		return node != null && 
+				(node.getProperties().get(DRAG_ME) != null 
+					|| shouldDrag(node.getParent()));
 //		return false;
 	}
 
