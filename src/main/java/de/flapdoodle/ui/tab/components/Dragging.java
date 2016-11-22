@@ -5,8 +5,18 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javafx.event.EventHandler;
 import javafx.event.EventType;
+import javafx.geometry.Insets;
 import javafx.scene.Group;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.BorderWidths;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.Node;
+import javafx.scene.effect.Effect;
 import javafx.scene.input.MouseEvent;
 
 public abstract class Dragging {
@@ -88,13 +98,23 @@ public abstract class Dragging {
 	public static Node makeDraggable(final Node node) {
 	    final DragContext dragContext = new DragContext();
 	    final Group wrapGroup = new Group(node);
+//	    wrapGroup.setStyle("-fx-background-color: #f0f000");
+//		BorderStrokeStyle style=BorderStrokeStyle.DOTTED;
+//		CornerRadii radii=new CornerRadii(3);
+//		BorderWidths widths=BorderWidths.DEFAULT;
+//		Paint stroke=Color.BLUEVIOLET;
+		//Border border=new Border();
+//		wrapGroup.setBorder(new Border(new BorderStroke(stroke, style, radii, widths)));
+//		wrapGroup.setMouseTransparent(false);
+		
 	    AtomicBoolean dragModeActiveProperty=new AtomicBoolean(false);
 	 
 	    wrapGroup.addEventFilter(
 	        MouseEvent.ANY,
 	        mouseEvent -> {
 		    	EventType<? extends MouseEvent> eventType = mouseEvent.getEventType();
-				//System.out.println(eventType+" "+dragModeActiveProperty+":"+mouseEvent.getPickResult().getIntersectedNode()); 
+				//System.out.println(eventType+" "+dragModeActiveProperty+":"+mouseEvent.getPickResult().getIntersectedNode());
+		    	System.out.println("Group "+wrapGroup.getBoundsInLocal()+" : "+wrapGroup.getBoundsInParent());
 		    	
 	        	if (dragModeActiveProperty.get()) {
 	        		if (eventType==MouseEvent.MOUSE_PRESSED) {
