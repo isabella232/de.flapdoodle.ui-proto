@@ -41,6 +41,7 @@ public class ColumnsUI extends Control {
 		this.dragButton=dragBtn;
 		this.dragButton.getProperties().put(Dragging.DRAG_ME, true);
 		
+		Dragging.moveNodeBy(this, dragButton);
 	}
 	
 	public static Node of(EntityId<Columns> columnsId) {

@@ -3,6 +3,7 @@ package de.flapdoodle.prototyping.layouts;
 import java.util.concurrent.ThreadLocalRandom;
 
 import de.flapdoodle.ui.tab.components.ColumnsUI;
+import de.flapdoodle.ui.tab.components.Dragging;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
@@ -64,36 +65,38 @@ public class DragMe extends Application {
 			Rectangle dragBox = Shapes.rectangleOf(50, 50, Color.MAGENTA);
 			box.getChildren().add(dragBox);
 			getChildren().add(box);
+			
+			Dragging.moveNodeBy(this, dragBox);
 		
-			dragBox.addEventFilter(MouseEvent.ANY, e -> {
-				if (coords.dragStarted) {
-					System.out.println(e);
-					if (e.getEventType()==MouseEvent.MOUSE_RELEASED) {
-						coords.dragStarted=false;
-					}
-					if (e.getEventType()!=MouseEvent.MOUSE_DRAGGED) {
-						e.consume();
-					}
-				}
-			});
-			
-			dragBox.setOnMousePressed(e -> {
-				System.out.println(e);
-				coords.x = e.getX();
-				coords.y = e.getY();
-				coords.layoutX=getLayoutX();
-				coords.layoutY=getLayoutY();
-				coords.dragStarted=true;
-				
-				toFront();
-			});
-			
-			dragBox.setOnMouseDragged(e -> {
-				System.out.println(e);
-				System.out.println((e.getX()-coords.x)+":"+(e.getY()-coords.y));
-				setLayoutX(e.getX()-coords.x+getLayoutX());
-				setLayoutY(e.getY()-coords.y+getLayoutY());
-			});
+//			dragBox.addEventFilter(MouseEvent.ANY, e -> {
+//				if (coords.dragStarted) {
+//					System.out.println(e);
+//					if (e.getEventType()==MouseEvent.MOUSE_RELEASED) {
+//						coords.dragStarted=false;
+//					}
+//					if (e.getEventType()!=MouseEvent.MOUSE_DRAGGED) {
+//						e.consume();
+//					}
+//				}
+//			});
+//			
+//			dragBox.setOnMousePressed(e -> {
+//				System.out.println(e);
+//				coords.x = e.getX();
+//				coords.y = e.getY();
+//				coords.layoutX=getLayoutX();
+//				coords.layoutY=getLayoutY();
+//				coords.dragStarted=true;
+//				
+//				toFront();
+//			});
+//			
+//			dragBox.setOnMouseDragged(e -> {
+//				System.out.println(e);
+//				System.out.println((e.getX()-coords.x)+":"+(e.getY()-coords.y));
+//				setLayoutX(e.getX()-coords.x+getLayoutX());
+//				setLayoutY(e.getY()-coords.y+getLayoutY());
+//			});
 
 			
 		}
@@ -117,35 +120,37 @@ public class DragMe extends Application {
 
 			getChildren().add(Shapes.rectangleOf(50, 50, Color.RED));
 
-			addEventFilter(MouseEvent.ANY, e -> {
-				if (coords.dragStarted) {
-					System.out.println(e);
-					if (e.getEventType()==MouseEvent.MOUSE_RELEASED) {
-						coords.dragStarted=false;
-					}
-					if (e.getEventType()!=MouseEvent.MOUSE_DRAGGED) {
-						e.consume();
-					}
-				}
-			});
+			Dragging.moveNodeBy(this, this);
 			
-			setOnMousePressed(e -> {
-				System.out.println(e);
-				coords.x = e.getX();
-				coords.y = e.getY();
-				coords.layoutX=getLayoutX();
-				coords.layoutY=getLayoutY();
-				coords.dragStarted=true;
-				
-				toFront();
-			});
-			
-			setOnMouseDragged(e -> {
-				System.out.println(e);
-				System.out.println((e.getX()-coords.x)+":"+(e.getY()-coords.y));
-				setLayoutX(e.getX()-coords.x+getLayoutX());
-				setLayoutY(e.getY()-coords.y+getLayoutY());
-			});
+//			addEventFilter(MouseEvent.ANY, e -> {
+//				if (coords.dragStarted) {
+//					System.out.println(e);
+//					if (e.getEventType()==MouseEvent.MOUSE_RELEASED) {
+//						coords.dragStarted=false;
+//					}
+//					if (e.getEventType()!=MouseEvent.MOUSE_DRAGGED) {
+//						e.consume();
+//					}
+//				}
+//			});
+//			
+//			setOnMousePressed(e -> {
+//				System.out.println(e);
+//				coords.x = e.getX();
+//				coords.y = e.getY();
+//				coords.layoutX=getLayoutX();
+//				coords.layoutY=getLayoutY();
+//				coords.dragStarted=true;
+//				
+//				toFront();
+//			});
+//			
+//			setOnMouseDragged(e -> {
+//				System.out.println(e);
+//				System.out.println((e.getX()-coords.x)+":"+(e.getY()-coords.y));
+//				setLayoutX(e.getX()-coords.x+getLayoutX());
+//				setLayoutY(e.getY()-coords.y+getLayoutY());
+//			});
 		}
 	}
 	

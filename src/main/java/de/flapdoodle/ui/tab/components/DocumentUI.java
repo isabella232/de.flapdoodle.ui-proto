@@ -99,7 +99,7 @@ public class DocumentUI extends Control {
 //			System.out.println("dragged -> "+id);
 //		});
 		//return makeDraggable(ret);
-		return Dragging.makeDraggable(ret);
+		return ret; // Dragging.makeDraggable(ret);
 	}
 
 	private static final class DragContext {

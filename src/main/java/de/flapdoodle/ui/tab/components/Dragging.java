@@ -2,6 +2,7 @@ package de.flapdoodle.ui.tab.components;
 
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 import javafx.event.EventHandler;
 import javafx.event.EventType;
@@ -28,6 +29,48 @@ public abstract class Dragging {
 		protected double initialTranslateX;
 		protected double initialTranslateY;
 		
+	}
+	
+	private static class MouseCoords {
+		double x;
+		double y;
+//		double layoutX;
+//		double layoutY;
+		boolean dragStarted;
+	}
+
+	
+	public static void moveNodeBy(Node movingNode, Node triggerNode) {
+		MouseCoords coords=new MouseCoords();
+		
+		triggerNode.addEventFilter(MouseEvent.ANY, e -> {
+			if (coords.dragStarted) {
+//				System.out.println(e);
+				if (e.getEventType()==MouseEvent.MOUSE_RELEASED) {
+					coords.dragStarted=false;
+				}
+				if (e.getEventType()!=MouseEvent.MOUSE_DRAGGED) {
+					e.consume();
+				}
+			}
+		});
+		
+		triggerNode.setOnMousePressed(e -> {
+//			System.out.println(e);
+			coords.x = e.getX();
+			coords.y = e.getY();
+//			coords.layoutX=movingNode.getLayoutX();
+//			coords.layoutY=movingNode.getLayoutY();
+			coords.dragStarted=true;
+		});
+		
+		triggerNode.setOnMouseDragged(e -> {
+//			System.out.println(e);
+//			System.out.println((e.getX()-coords.x)+":"+(e.getY()-coords.y));
+			movingNode.setLayoutX(e.getX()-coords.x+movingNode.getLayoutX());
+			movingNode.setLayoutY(e.getY()-coords.y+movingNode.getLayoutY());
+		});
+
 	}
 	
 	public static Node makeDraggable(final Node triggerNode, Node movingNode) {
