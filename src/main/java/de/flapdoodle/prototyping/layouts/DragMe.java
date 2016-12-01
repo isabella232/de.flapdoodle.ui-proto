@@ -17,6 +17,7 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -36,10 +37,68 @@ public class DragMe extends Application {
 		
 		root.getChildren().add(new DragDrop());
 		root.getChildren().add(new MoveMe());
+		root.getChildren().add(new MoveMeByButton());
 		
         primaryStage.setScene(new Scene(root, 300, 250));
         primaryStage.show();
 	}
+	
+	public static class MoveMeByButton extends Control {
+
+		MouseCoords coords=new MouseCoords();
+		
+		public MoveMeByButton() {
+			setSkin(new GenericSkin<Control>(this));
+			
+			setLayoutX(ThreadLocalRandom.current().nextInt(100));
+			setLayoutY(ThreadLocalRandom.current().nextInt(100));
+			
+			Paint paint=new Color(0.6,0.6,0.6,0.6);
+			CornerRadii rad=new CornerRadii(5.0);
+			Insets insets=new Insets(-4, -4, -4, -4);
+			setBackground(new Background(new BackgroundFill(paint, rad, insets)));
+
+			HBox box = new HBox(2);
+			box.getChildren().add(Shapes.rectangleOf(50, 50, Color.AQUAMARINE));
+			box.getChildren().add(Shapes.rectangleOf(50, 50, Color.YELLOW));
+			Rectangle dragBox = Shapes.rectangleOf(50, 50, Color.MAGENTA);
+			box.getChildren().add(dragBox);
+			getChildren().add(box);
+		
+			dragBox.addEventFilter(MouseEvent.ANY, e -> {
+				if (coords.dragStarted) {
+					System.out.println(e);
+					if (e.getEventType()==MouseEvent.MOUSE_RELEASED) {
+						coords.dragStarted=false;
+					}
+					if (e.getEventType()!=MouseEvent.MOUSE_DRAGGED) {
+						e.consume();
+					}
+				}
+			});
+			
+			dragBox.setOnMousePressed(e -> {
+				System.out.println(e);
+				coords.x = e.getX();
+				coords.y = e.getY();
+				coords.layoutX=getLayoutX();
+				coords.layoutY=getLayoutY();
+				coords.dragStarted=true;
+				
+				toFront();
+			});
+			
+			dragBox.setOnMouseDragged(e -> {
+				System.out.println(e);
+				System.out.println((e.getX()-coords.x)+":"+(e.getY()-coords.y));
+				setLayoutX(e.getX()-coords.x+getLayoutX());
+				setLayoutY(e.getY()-coords.y+getLayoutY());
+			});
+
+			
+		}
+	}
+	
 	
 	public static class MoveMe extends Control {
 
@@ -77,6 +136,8 @@ public class DragMe extends Application {
 				coords.layoutX=getLayoutX();
 				coords.layoutY=getLayoutY();
 				coords.dragStarted=true;
+				
+				toFront();
 			});
 			
 			setOnMouseDragged(e -> {
@@ -85,7 +146,6 @@ public class DragMe extends Application {
 				setLayoutX(e.getX()-coords.x+getLayoutX());
 				setLayoutY(e.getY()-coords.y+getLayoutY());
 			});
-			
 		}
 	}
 	
