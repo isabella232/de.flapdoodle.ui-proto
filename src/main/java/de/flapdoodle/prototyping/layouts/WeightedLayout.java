@@ -1,7 +1,5 @@
 package de.flapdoodle.prototyping.layouts;
 
-import com.google.common.net.HostSpecifier;
-
 import de.flapdoodle.ui.components.Constraint;
 import de.flapdoodle.ui.components.GridLayoutBuilder;
 import de.flapdoodle.ui.components.MinMax;
@@ -12,7 +10,6 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Control;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;
@@ -20,13 +17,10 @@ import javafx.scene.layout.BorderWidths;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.GridPaneBuilder;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 public class WeightedLayout extends Application {
