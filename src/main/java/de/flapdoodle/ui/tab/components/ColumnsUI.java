@@ -19,7 +19,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.SkinBase;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
+import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
@@ -29,6 +31,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Callback;
+import javafx.util.StringConverter;
+import javafx.util.converter.IntegerStringConverter;
 
 public class ColumnsUI extends Control {
 
@@ -79,10 +83,17 @@ public class ColumnsUI extends Control {
 	private TableView<Integer> dummyTable() {
 		TableView<Integer> tableView = new TableView<>();
 		tableView.setEditable(true);
+		
 		TableColumn<Integer, String> scolumn=new TableColumn<>("Text");
 		scolumn.setEditable(true);
+		scolumn.setCellFactory(TextFieldTableCell.forTableColumn());
 		scolumn.setCellValueFactory(param -> new ReadOnlyObjectWrapper<String>(""+param.getValue()));
+		scolumn.setOnEditCommit((CellEditEvent<Integer, String> e) -> {
+			System.out.println(" -> "+e.getTablePosition()+" = "+e.getOldValue()+" -> "+e.getNewValue());
+		});
+		
 		TableColumn<Integer, Integer> icolumn=new TableColumn<>("Zahl");
+		icolumn.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
 		icolumn.setCellValueFactory(param -> new ReadOnlyObjectWrapper<Integer>(param.getValue()));
 		icolumn.setEditable(true);
 		

@@ -80,7 +80,7 @@ public class Launcher extends Application {
 		//root.setRight(overview);
 		root.setCenter(docView);
 		
-        primaryStage.setScene(new Scene(root, 300, 250));
+        primaryStage.setScene(new Scene(root, 800, 640));
         primaryStage.show();
         
 //        Stage secondStage = new Stage();
