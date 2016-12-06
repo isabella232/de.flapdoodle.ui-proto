@@ -1,14 +1,14 @@
 package de.flapdoodle.ui.tab.components;
 
-import java.time.LocalDateTime;
-
-import de.flapdoodle.prototyping.layouts.Shapes;
 import de.flapdoodle.ui.components.BoxBuilder;
 import de.flapdoodle.ui.components.Sizes;
+import de.flapdoodle.ui.components.clone.CellUtils;
 import de.flapdoodle.ui.tab.data.Columns;
 import de.flapdoodle.ui.tab.data.EntityId;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.value.ObservableIntegerValue;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
@@ -17,11 +17,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.SkinBase;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
@@ -29,9 +29,9 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import javafx.scene.shape.Rectangle;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
+import javafx.util.converter.DefaultStringConverter;
 import javafx.util.converter.IntegerStringConverter;
 
 public class ColumnsUI extends Control {
@@ -86,14 +86,15 @@ public class ColumnsUI extends Control {
 		
 		TableColumn<Integer, String> scolumn=new TableColumn<>("Text");
 		scolumn.setEditable(true);
-		scolumn.setCellFactory(TextFieldTableCell.forTableColumn());
+		scolumn.setCellFactory(textFieldF(new DefaultStringConverter()));
 		scolumn.setCellValueFactory(param -> new ReadOnlyObjectWrapper<String>(""+param.getValue()));
 		scolumn.setOnEditCommit((CellEditEvent<Integer, String> e) -> {
 			System.out.println(" -> "+e.getTablePosition()+" = "+e.getOldValue()+" -> "+e.getNewValue());
 		});
 		
 		TableColumn<Integer, Integer> icolumn=new TableColumn<>("Zahl");
-		icolumn.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+		icolumn.setCellFactory(textFieldF(new IntegerStringConverter()));
+		//icolumn.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
 		icolumn.setCellValueFactory(param -> new ReadOnlyObjectWrapper<Integer>(param.getValue()));
 		icolumn.setEditable(true);
 		
@@ -115,4 +116,174 @@ public class ColumnsUI extends Control {
 		}
 	}
 
+	
+	public static <S,T> Callback<TableColumn<S,T>, TableCell<S,T>> textFieldF(StringConverter<T> converter) {
+		Callback<TableColumn<S,T>, TableCell<S,T>> cellFactory =
+         new Callback<TableColumn<S,T>, TableCell<S,T>>() {
+             public TableCell<S,T> call(TableColumn<S,T> p) {
+                return new EditingCell<S,T>(converter);
+             }
+         };
+         return cellFactory;
+	}
+	
+    static class EditingCell<S, T> extends TableCell<S, T> {
+    	 
+    	public EditingCell(StringConverter<T> converter) {
+    		this.getStyleClass().add("text-field-table-cell");
+    		setConverter(converter);
+		}
+    	
+        /***************************************************************************
+         *                                                                         *
+         * Fields                                                                  *
+         *                                                                         *
+         **************************************************************************/
+
+        private TextField textField;
+
+
+
+        /***************************************************************************
+         *                                                                         *
+         * Properties                                                              *
+         *                                                                         *
+         **************************************************************************/
+
+        // --- converter
+        private ObjectProperty<StringConverter<T>> converter =
+                new SimpleObjectProperty<StringConverter<T>>(this, "converter");
+
+        /**
+         * The {@link StringConverter} property.
+         */
+        public final ObjectProperty<StringConverter<T>> converterProperty() {
+            return converter;
+        }
+
+        /**
+         * Sets the {@link StringConverter} to be used in this cell.
+         */
+        public final void setConverter(StringConverter<T> value) {
+            converterProperty().set(value);
+        }
+
+        /**
+         * Returns the {@link StringConverter} used in this cell.
+         */
+        public final StringConverter<T> getConverter() {
+            return converterProperty().get();
+        }
+
+
+
+        /***************************************************************************
+         *                                                                         *
+         * Public API                                                              *
+         *                                                                         *
+         **************************************************************************/
+
+        /** {@inheritDoc} */
+        @Override public void startEdit() {
+            if (! isEditable()
+                    || ! getTableView().isEditable()
+                    || ! getTableColumn().isEditable()) {
+                return;
+            }
+            super.startEdit();
+
+            if (isEditing()) {
+                if (textField == null) {
+                    textField = CellUtils.createTextField(this, getConverter());
+                    textField.focusedProperty().addListener(new ChangeListener<Boolean>(){
+                      @Override
+                      public void changed(ObservableValue<? extends Boolean> arg0, 
+                          Boolean arg1, Boolean arg2) {
+                              if (!arg2) {
+                                  commitEdit(getConverter().fromString(textField.getText()));
+                              }
+                      }
+                  });
+                }
+
+                CellUtils.startEdit(this, getConverter(), null, null, textField);
+            }
+        }
+
+        /** {@inheritDoc} */
+        @Override public void cancelEdit() {
+            super.cancelEdit();
+            CellUtils.cancelEdit(this, getConverter(), null);
+        }
+
+        /** {@inheritDoc} */
+        @Override public void updateItem(T item, boolean empty) {
+            super.updateItem(item, empty);
+            CellUtils.updateItem(this, getConverter(), null, null, textField);
+        }
+
+    	
+//        private TextField textField;
+// 
+//        public EditingCell() {
+//        }
+// 
+//        @Override
+//        public void startEdit() {
+//            if (!isEmpty()) {
+//                super.startEdit();
+//                createTextField();
+//                setText(null);
+//                setGraphic(textField);
+//                textField.selectAll();
+//            }
+//        }
+// 
+//        @Override
+//        public void cancelEdit() {
+//            super.cancelEdit();
+// 
+//            setText((String) getItem());
+//            setGraphic(null);
+//        }
+// 
+//        @Override
+//        public void updateItem(String item, boolean empty) {
+//            super.updateItem(item, empty);
+// 
+//            if (empty) {
+//                setText(null);
+//                setGraphic(null);
+//            } else {
+//                if (isEditing()) {
+//                    if (textField != null) {
+//                        textField.setText(getString());
+//                    }
+//                    setText(null);
+//                    setGraphic(textField);
+//                } else {
+//                    setText(getString());
+//                    setGraphic(null);
+//                }
+//            }
+//        }
+// 
+//        private void createTextField() {
+//            textField = new TextField(getString());
+//            textField.setMinWidth(this.getWidth() - this.getGraphicTextGap()* 2);
+//            textField.focusedProperty().addListener(new ChangeListener<Boolean>(){
+//                @Override
+//                public void changed(ObservableValue<? extends Boolean> arg0, 
+//                    Boolean arg1, Boolean arg2) {
+//                        if (!arg2) {
+//                            commitEdit(textField.getText());
+//                        }
+//                }
+//            });
+//        }
+// 
+//        private String getString() {
+//            return getItem() == null ? "" : getItem().toString();
+//        }
+    }
 }
